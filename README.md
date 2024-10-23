@@ -1,4 +1,4 @@
-##🐍 Snake Game - Flask
+# 🐍 Snake Game - Flask
 Este é um projeto simples de um jogo da cobrinha (Snake) desenvolvido utilizando o framework Flask em Python. O jogo é executado em um navegador web, onde o jogador controla a cobrinha usando as setas do teclado, coletando comida para crescer sem colidir com as bordas ou com o próprio corpo.
 
 🚀 Tecnologias Utilizadas
