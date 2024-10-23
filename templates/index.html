@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Cobrinha</title>
+    <style>
+        canvas {
+            background-color: #000;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+
+    <script>
+        // Configurações do canvas
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const tamanho_bloco = 20;
+        let velocidadeX = 0;
+        let velocidadeY = 0;
+        let cobra = [{x: 200, y: 200}]; // Posição inicial
+        let comida = gerar_comida();
+        let pontos = 0;
+
+        // Função para desenhar a cobra
+        function desenharCobra() {
+            cobra.forEach(bloco => {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(bloco.x, bloco.y, tamanho_bloco, tamanho_bloco);
+            });
+        }
+
+        // Função para desenhar a comida
+        function desenharComida() {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(comida.x, comida.y, tamanho_bloco, tamanho_bloco);
+        }
+
+        // Função para atualizar a posição da cobra
+        function moverCobra() {
+            const cabeca = {x: cobra[0].x + velocidadeX, y: cobra[0].y + velocidadeY};
+            cobra.unshift(cabeca); // Adiciona nova cabeça
+            if (cobra[0].x === comida.x && cobra[0].y === comida.y) {
+                comida = gerar_comida(); // Gera nova comida
+                pontos++;
+            } else {
+                cobra.pop(); // Remove a cauda
+            }
+        }
+
+        // Função para gerar nova comida
+        function gerar_comida() {
+            const x = Math.floor(Math.random() * canvas.width / tamanho_bloco) * tamanho_bloco;
+            const y = Math.floor(Math.random() * canvas.height / tamanho_bloco) * tamanho_bloco;
+            return {x, y};
+        }
+
+        // Função para verificar colisões
+        function verificarColisoes() {
+            const cabeca = cobra[0];
+            // Colisão com paredes
+            if (cabeca.x < 0 || cabeca.x >= canvas.width || cabeca.y < 0 || cabeca.y >= canvas.height) {
+                gameOver();
+            }
+
+            // Colisão com o próprio corpo
+            for (let i = 1; i < cobra.length; i++) {
+                if (cabeca.x === cobra[i].x && cabeca.y === cobra[i].y) {
+                    gameOver();
+                }
+            }
+        }
+
+        // Função de fim de jogo
+        function gameOver() {
+            alert('Game Over! Pontos: ' + pontos);
+            document.location.reload();
+        }
+
+        // Função para atualizar o jogo
+        function atualizarJogo() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa o canvas
+            moverCobra();
+            desenharCobra();
+            desenharComida();
+            verificarColisoes();
+        }
+
+        // Controlar a cobra via teclado
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowUp' && velocidadeY === 0) {
+                velocidadeX = 0;
+                velocidadeY = -tamanho_bloco;
+            } else if (event.key === 'ArrowDown' && velocidadeY === 0) {
+                velocidadeX = 0;
+                velocidadeY = tamanho_bloco;
+            } else if (event.key === 'ArrowLeft' && velocidadeX === 0) {
+                velocidadeX = -tamanho_bloco;
+                velocidadeY = 0;
+            } else if (event.key === 'ArrowRight' && velocidadeX === 0) {
+                velocidadeX = tamanho_bloco;
+                velocidadeY = 0;
+            }
+        });
+
+        // Atualizar o jogo a cada 100ms
+        setInterval(atualizarJogo, 100);
+    </script>
+</body>
+</html>
